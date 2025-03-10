@@ -20,6 +20,9 @@ export default function NotebookCell({
   // Ref for typing animation timer
   const typingRef = useRef(null);
   
+  // Process the code to remove any potential "undefined" suffix
+  const processedCode = code ? code.replace(/undefined$/, '') : '';
+  
   // Typing animation effect
   useEffect(() => {
     // Clear existing timer
@@ -36,8 +39,8 @@ export default function NotebookCell({
     
     // Function to type the next character
     const typeNextChar = () => {
-      if (currentIndex < code.length) {
-        setDisplayedCode(prev => prev + code[currentIndex]);
+      if (currentIndex < processedCode.length) {
+        setDisplayedCode(prev => prev + processedCode[currentIndex]);
         currentIndex++;
         typingRef.current = setTimeout(typeNextChar, typingSpeed);
       } else {
@@ -56,7 +59,7 @@ export default function NotebookCell({
         clearTimeout(typingRef.current);
       }
     };
-  }, [code, typingSpeed]);
+  }, [processedCode, typingSpeed]);
   
   // Render code with interactive elements
   const renderInteractiveCode = () => {

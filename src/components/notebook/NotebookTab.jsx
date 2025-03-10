@@ -8,9 +8,8 @@ export default function NotebookTab({ notebook, datasets }) {
       return notebook.initialCells;
     }
     
-    // Default welcome cell - make sure we use raw strings for code examples
-    return [{
-      code: `# ${notebook.title || 'Welcome to Data Explorer'}
+    // Default welcome cell - using raw string
+    const defaultCellCode = `# ${notebook.title || 'Welcome to Data Explorer'}
 # Let's explore the available data
 
 # Get available datasets
@@ -19,7 +18,10 @@ print("Available data sources:")
 for source in available_data:
     print(f"  > {source}")
 
-# Click on any data source to explore it`,
+# Click on any data source to explore it`;
+    
+    return [{
+      code: defaultCellCode,
       output: (
         <div className="p-4">
           <h3 className="text-xl mb-4 text-terminal-green">Available data sources:</h3>
@@ -91,16 +93,18 @@ for source in available_data:
       return;
     }
     
-    // Code for dataset exploration - use backticks to avoid JS execution
-    const cellCode = `# Exploring dataset: ${datasetKey}
-import pandas as pd
-
-# Load the dataset
-data = pd.read_json("${datasetKey}.json")
-
-# Display basic information
-data.info()
-data.head()`;
+    // Code for dataset exploration - make sure it's just a string literal with no interpolation
+    const cellCode = [
+      `# Exploring dataset: ${datasetKey}`,
+      'import pandas as pd',
+      '',
+      `# Load the dataset`,
+      `data = pd.read_json("${datasetKey}.json")`,
+      '',
+      '# Display basic information',
+      'data.info()',
+      'data.head()'
+    ].join('\n');
     
     // Add a new cell
     addCell({
@@ -191,16 +195,18 @@ data.head()`;
       return;
     }
     
-    // Code for item exploration
+    // Code for item exploration - using array join to avoid template literals
     const nameField = item.title || item.name || itemId;
-    const cellCode = `# Exploring details for: ${nameField}
-item = data[data["id"] == "${itemId}"].iloc[0]
-
-# Display detailed information
-print(f"Detail view for: {item['title']}")
-for key, value in item.items():
-    if key not in ["id", "related"]:
-        print(f"{key}: {value}")`;
+    const cellCode = [
+      `# Exploring details for: ${nameField}`,
+      `item = data[data["id"] == "${itemId}"].iloc[0]`,
+      '',
+      '# Display detailed information',
+      `print(f"Detail view for: {item['title']}")`,
+      'for key, value in item.items():',
+      '    if key not in ["id", "related"]:',
+      '        print(f"{key}: {value}")'
+    ].join('\n');
     
     // Add a new cell
     addCell({
