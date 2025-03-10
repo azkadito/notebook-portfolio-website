@@ -54,11 +54,9 @@ export default function Home() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/exploration">
-              <a className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-terminal-green border border-terminal-green rounded-md transition-colors shadow-glow-green text-center">
-                <span className="text-terminal-green mr-2">$</span>
-                <span>explore_data()</span>
-              </a>
+            <Link href="/exploration" className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-terminal-green border border-terminal-green rounded-md transition-colors shadow-glow-green text-center">
+              <span className="text-terminal-green mr-2">$</span>
+              <span>explore_data()</span>
             </Link>
           </div>
           

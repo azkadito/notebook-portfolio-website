@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 /**
  * ExplorationCell - A notebook cell with code input and output content
  * 
- * Simplified version with reliable typing animation and interactive elements
+ * Enhanced with terminal aesthetics and interactive elements
  */
 const ExplorationCell = ({ 
   code, 
@@ -103,7 +103,7 @@ const ExplorationCell = ({
     }
     
     return (
-      <pre className="font-mono text-gray-300">
+      <pre className="font-mono text-gray-300 scan-lines">
         {segments.map((segment, idx) => {
           if (segment.type === 'text') {
             return <span key={idx}>{segment.content}</span>;
@@ -135,25 +135,36 @@ const ExplorationCell = ({
   const InteractiveElement = ({ children, type, onClick, tooltip }) => {
     const [isHovered, setIsHovered] = useState(false);
     
+    // Get the appropriate CSS class based on element type
+    const getElementClass = () => {
+      switch (type) {
+        case 'keyword':
+          return 'interactive-keyword';
+        case 'function':
+          return 'interactive-function';
+        case 'comment':
+          return 'interactive-comment';
+        default:
+          return 'interactive-keyword';
+      }
+    };
+    
     // Get styles based on element type
     const styles = {
       keyword: {
-        baseClasses: "px-2 py-0.5 rounded bg-emerald-800 bg-opacity-70 text-emerald-400 border-2 border-emerald-500 hover:bg-emerald-700 hover:text-white",
-        glow: "0 0 8px rgba(0, 255, 136, 0.4)",
+        glow: "0 0 8px rgba(0, 255, 136, 0.6)",
         tooltipBg: "bg-emerald-900",
         prefix: ">",
         suffix: ""
       },
       function: {
-        baseClasses: "px-2 py-0.5 rounded bg-blue-800 bg-opacity-70 text-blue-300 border-2 border-blue-500 hover:bg-blue-700 hover:text-white",
-        glow: "0 0 8px rgba(76, 201, 240, 0.4)",
+        glow: "0 0 8px rgba(76, 201, 240, 0.6)",
         tooltipBg: "bg-blue-900",
         prefix: "",
         suffix: "()"
       },
       comment: {
-        baseClasses: "px-2 py-0.5 rounded bg-gray-800 bg-opacity-70 text-gray-400 border-2 border-gray-700 hover:bg-gray-700 hover:text-white",
-        glow: "0 0 8px rgba(150, 150, 150, 0.4)",
+        glow: "0 0 8px rgba(150, 150, 150, 0.6)",
         tooltipBg: "bg-gray-900",
         prefix: "#",
         suffix: ""
@@ -168,7 +179,7 @@ const ExplorationCell = ({
           onClick={onClick}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`${style.baseClasses} cursor-pointer transition-all duration-300`}
+          className={`${getElementClass()} cursor-pointer transition-all duration-300`}
           style={{
             boxShadow: isHovered ? style.glow : 'none',
             transform: isHovered ? 'translateY(-2px)' : 'translateY(0)'
@@ -192,28 +203,30 @@ const ExplorationCell = ({
   };
   
   return (
-    <div className="notebook-cell mb-12 border-b border-gray-800 pb-8">
+    <div className="notebook-cell">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Input section (code) - 1/3 width on desktop */}
         <div className="cell-input">
-          <div className="flex items-center bg-gray-800 text-gray-400 text-xs px-2 py-1 rounded-t-md">
-            <span className="text-green-500 mr-1">In [{cellNumber}]:</span>
+          <div className="terminal-header">
+            <span className="text-terminal-green mr-1">In [{cellNumber}]:</span>
           </div>
-          <div className="bg-gray-900 p-4 rounded-b-md overflow-x-auto">
-            {renderCodeWithInteractiveElements()}
-            {isTyping && (
-              <span className="inline-block h-4 w-2 ml-1 bg-white animate-blink"></span>
-            )}
+          <div className="terminal-window">
+            <div className="terminal-body scan-lines">
+              {renderCodeWithInteractiveElements()}
+              {isTyping && (
+                <span className="inline-block h-4 w-2 ml-1 bg-white animate-blink"></span>
+              )}
+            </div>
           </div>
         </div>
         
         {/* Output section - 2/3 width on desktop */}
         <div className="cell-output md:col-span-2">
-          <div className="flex items-center bg-gray-800 text-gray-400 text-xs px-2 py-1 rounded-t-md">
-            <span className="text-red-500 mr-1">Out [{cellNumber}]:</span>
+          <div className="terminal-header">
+            <span className="text-terminal-red mr-1">Out [{cellNumber}]:</span>
           </div>
           <div 
-            className={`bg-gray-900 p-4 rounded-b-md transition-opacity duration-300 
+            className={`terminal-window terminal-body transition-opacity duration-300 
                        ${showOutput ? "opacity-100" : "opacity-0"}`}
           >
             {output}

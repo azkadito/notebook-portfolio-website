@@ -4,7 +4,7 @@
 
 /* Base styles */
 body {
-  @apply bg-notebook-dark text-notebook-light;
+  @apply bg-notebook-dark text-notebook-light font-mono;
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0px,
@@ -39,6 +39,50 @@ code, pre {
   .terminal-body {
     @apply p-4 font-mono text-sm text-gray-300;
   }
+
+  /* Notebook cells styling */
+  .notebook-cell {
+    @apply mb-12 border-b border-gray-800 pb-8;
+  }
+
+  .cell-input {
+    @apply relative;
+  }
+
+  .cell-input pre {
+    @apply bg-gray-900 rounded-md p-4 overflow-x-auto border border-gray-800;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .cell-output {
+    @apply relative;
+  }
+
+  .cell-output > div {
+    @apply bg-gray-900 rounded-md p-4 border border-gray-800;
+  }
+
+  /* Interactive elements styling */
+  .interactive-keyword {
+    @apply relative inline-block px-2 py-0.5 rounded bg-emerald-800 bg-opacity-70 
+    text-emerald-400 cursor-pointer transition-all duration-300 border-2 
+    border-emerald-500 hover:bg-emerald-700 hover:text-white;
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+  }
+  
+  .interactive-function {
+    @apply relative inline-block px-2 py-0.5 rounded bg-blue-800 bg-opacity-70 
+    text-blue-300 cursor-pointer transition-all duration-300 border-2 
+    border-blue-500 hover:bg-blue-700 hover:text-white;
+    box-shadow: 0 0 8px rgba(76, 201, 240, 0.4);
+  }
+  
+  .interactive-comment {
+    @apply relative inline-block px-2 py-0.5 rounded bg-gray-800 bg-opacity-70 
+    text-gray-400 cursor-pointer transition-all duration-300 border-2 
+    border-gray-700 hover:bg-gray-700 hover:text-white;
+    box-shadow: 0 0 8px rgba(150, 150, 150, 0.4);
+  }
   
   /* Scan line effect */
   .scan-lines {
@@ -61,6 +105,38 @@ code, pre {
     background-size: 100% 4px;
     pointer-events: none;
   }
+
+  /* Dataset styling */
+  .dataset-preview table {
+    @apply w-full text-sm font-mono border-collapse;
+  }
+
+  .dataset-preview th {
+    @apply p-2 border border-gray-700 text-left text-blue-400 bg-gray-800;
+  }
+
+  .dataset-preview td {
+    @apply p-2 border border-gray-700;
+  }
+
+  .dataset-preview tr:nth-child(even) {
+    @apply bg-gray-800;
+  }
+
+  .dataset-preview tr:nth-child(odd) {
+    @apply bg-gray-900;
+  }
+
+  .detail-view {
+    @apply bg-gray-900 p-4 rounded-md;
+  }
+
+  /* Reset button */
+  .reset-button {
+    @apply fixed bottom-4 right-4 bg-gray-800 text-gray-300 px-3 py-2 rounded-md
+    border border-gray-700 hover:bg-gray-700 transition-colors shadow-lg
+    flex items-center space-x-1 text-sm;
+  }
 }
 
 /* Animation modifiers */
@@ -70,4 +146,20 @@ code, pre {
 
 .cursor-blink {
   @apply animate-blink;
+}
+
+/* Keyframe animations */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes scanLine {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 136, 0.4); }
+  50% { box-shadow: 0 0 15px rgba(0, 255, 136, 0.7); }
 }
