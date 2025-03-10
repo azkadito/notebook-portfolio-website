@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+body {
+  @apply bg-notebook-dark text-notebook-light;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(32, 32, 64, 0.05) 2px,
+    rgba(32, 32, 64, 0.05) 4px
+  );
+}
+
+/* Set default cursor */
+* {
+  cursor: default;
+}
+a, button, [role="button"] {
+  cursor: pointer;
+}
+code, pre {
+  cursor: text;
+}
+
+/* Custom utility classes */
+@layer components {
+  /* Terminal themed elements */
+  .terminal-window {
+    @apply bg-gray-900 border border-gray-700 rounded-md overflow-hidden shadow-lg;
+  }
+  
+  .terminal-header {
+    @apply bg-gray-800 p-2 border-b border-gray-700 flex items-center;
+  }
+  
+  .terminal-body {
+    @apply p-4 font-mono text-sm text-gray-300;
+  }
+  
+  /* Scan line effect */
+  .scan-lines {
+    position: relative;
+  }
+  
+  .scan-lines::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(32, 32, 64, 0.05) 50%,
+      transparent 100%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+  }
+}
+
+/* Animation modifiers */
+.typing-container {
+  @apply whitespace-nowrap overflow-hidden;
+}
+
+.cursor-blink {
+  @apply animate-blink;
+}
