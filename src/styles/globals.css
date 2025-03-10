@@ -2,164 +2,352 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles */
-body {
-  @apply bg-notebook-dark text-notebook-light font-mono;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 2px,
-    rgba(32, 32, 64, 0.05) 2px,
-    rgba(32, 32, 64, 0.05) 4px
-  );
-}
-
-/* Set default cursor */
-* {
-  cursor: default;
-}
-a, button, [role="button"] {
-  cursor: pointer;
-}
-code, pre {
-  cursor: text;
-}
-
-/* Custom utility classes */
-@layer components {
-  /* Terminal themed elements */
-  .terminal-window {
-    @apply bg-gray-900 border border-gray-700 rounded-md overflow-hidden shadow-lg;
+@keyframes scan-line {
+  0% {
+    background-position: 0 0;
   }
-  
-  .terminal-header {
-    @apply bg-gray-800 p-2 border-b border-gray-700 flex items-center;
-  }
-  
-  .terminal-body {
-    @apply p-4 font-mono text-sm text-gray-300;
-  }
-
-  /* Notebook cells styling */
-  .notebook-cell {
-    @apply mb-12 border-b border-gray-800 pb-8;
-  }
-
-  .cell-input {
-    @apply relative;
-  }
-
-  .cell-input pre {
-    @apply bg-gray-900 rounded-md p-4 overflow-x-auto border border-gray-800;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-  }
-
-  .cell-output {
-    @apply relative;
-  }
-
-  .cell-output > div {
-    @apply bg-gray-900 rounded-md p-4 border border-gray-800;
-  }
-
-  /* Interactive elements styling */
-  .interactive-keyword {
-    @apply relative inline-block px-2 py-0.5 rounded bg-emerald-800 bg-opacity-70 
-    text-emerald-400 cursor-pointer transition-all duration-300 border-2 
-    border-emerald-500 hover:bg-emerald-700 hover:text-white;
-    box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
-  }
-  
-  .interactive-function {
-    @apply relative inline-block px-2 py-0.5 rounded bg-blue-800 bg-opacity-70 
-    text-blue-300 cursor-pointer transition-all duration-300 border-2 
-    border-blue-500 hover:bg-blue-700 hover:text-white;
-    box-shadow: 0 0 8px rgba(76, 201, 240, 0.4);
-  }
-  
-  .interactive-comment {
-    @apply relative inline-block px-2 py-0.5 rounded bg-gray-800 bg-opacity-70 
-    text-gray-400 cursor-pointer transition-all duration-300 border-2 
-    border-gray-700 hover:bg-gray-700 hover:text-white;
-    box-shadow: 0 0 8px rgba(150, 150, 150, 0.4);
-  }
-  
-  /* Scan line effect */
-  .scan-lines {
-    position: relative;
-  }
-  
-  .scan-lines::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      rgba(32, 32, 64, 0.05) 50%,
-      transparent 100%
-    );
-    background-size: 100% 4px;
-    pointer-events: none;
-  }
-
-  /* Dataset styling */
-  .dataset-preview table {
-    @apply w-full text-sm font-mono border-collapse;
-  }
-
-  .dataset-preview th {
-    @apply p-2 border border-gray-700 text-left text-blue-400 bg-gray-800;
-  }
-
-  .dataset-preview td {
-    @apply p-2 border border-gray-700;
-  }
-
-  .dataset-preview tr:nth-child(even) {
-    @apply bg-gray-800;
-  }
-
-  .dataset-preview tr:nth-child(odd) {
-    @apply bg-gray-900;
-  }
-
-  .detail-view {
-    @apply bg-gray-900 p-4 rounded-md;
-  }
-
-  /* Reset button */
-  .reset-button {
-    @apply fixed bottom-4 right-4 bg-gray-800 text-gray-300 px-3 py-2 rounded-md
-    border border-gray-700 hover:bg-gray-700 transition-colors shadow-lg
-    flex items-center space-x-1 text-sm;
+  100% {
+    background-position: 0 100%;
   }
 }
 
-/* Animation modifiers */
-.typing-container {
-  @apply whitespace-nowrap overflow-hidden;
-}
-
-.cursor-blink {
-  @apply animate-blink;
-}
-
-/* Keyframe animations */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
 
-@keyframes scanLine {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100%; }
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
 }
 
-@keyframes glow {
-  0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 136, 0.4); }
-  50% { box-shadow: 0 0 15px rgba(0, 255, 136, 0.7); }
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(76, 201, 240, 0.3); }
+  50% { box-shadow: 0 0 8px rgba(76, 201, 240, 0.5); }
+}
+
+:root {
+  --foreground-rgb: 220, 220, 220;
+  --background-start-rgb: 12, 12, 24;
+  --background-end-rgb: 18, 18, 36;
+  --terminal-green: 0, 255, 136;
+  --terminal-blue: 76, 201, 240;
+  --terminal-amber: 255, 196, 0;
+  --terminal-red: 255, 85, 85;
+}
+
+html {
+  font-family: 'Fira Code', monospace;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    )
+    fixed;
+  background-image: 
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(32, 32, 64, 0.05) 2px,
+      rgba(32, 32, 64, 0.05) 4px
+    );
+  min-height: 100vh;
+  font-family: 'Fira Code', monospace;
+}
+
+/* Custom cursor */
+* {
+  cursor: default;
+}
+
+a, button, [role="button"] {
+  cursor: pointer;
+}
+
+code, pre {
+  cursor: text;
+}
+
+@layer components {
+  .notebook-container {
+    @apply max-w-6xl mx-auto p-4 md:p-6;
+  }
+  
+  .notebook-cell {
+    @apply bg-cell-bg rounded-md mb-8 overflow-hidden shadow-cell border border-gray-700;
+  }
+  
+  .notebook-cell::before {
+    content: "[ Cell ]";
+    @apply block text-sm text-gray-400 bg-gray-800 px-2 py-1 font-mono border-b border-gray-700;
+  }
+  
+  .cell-layout {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-0;
+  }
+  
+  .code-block {
+    @apply bg-code-bg p-4 font-mono text-sm md:text-base leading-relaxed overflow-x-auto border-r border-gray-700;
+    position: relative;
+  }
+  
+  .code-block::before {
+    content: "In [1]:";
+    @apply text-xs text-gray-400 absolute top-2 left-2;
+  }
+  
+  .output-block {
+    @apply bg-output-bg p-4 md:p-6 relative;
+  }
+  
+  .output-block::before {
+    content: "Out [1]:";
+    @apply text-xs text-gray-400 absolute top-2 left-2;
+  }
+  
+  .interactive-keyword {
+    @apply relative inline-block px-2 py-0.5 rounded bg-emerald-800 bg-opacity-70 text-emerald-400 cursor-pointer transition-all duration-300 border-2 border-emerald-500 hover:bg-emerald-700 hover:text-white;
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+  }
+  
+  .interactive-keyword::before {
+    content: ">";
+    @apply mr-1 text-emerald-300 font-bold;
+  }
+  
+  .interactive-function {
+    @apply relative inline-block px-2 py-0.5 rounded bg-blue-800 bg-opacity-70 text-blue-300 cursor-pointer transition-all duration-300 border-2 border-blue-500 hover:bg-blue-700 hover:text-white;
+    box-shadow: 0 0 8px rgba(76, 201, 240, 0.4);
+  }
+  
+  .interactive-function::after {
+    content: "()";
+    @apply ml-0 text-blue-300 font-bold;
+  }
+  
+  .interactive-comment {
+    @apply relative inline-block px-2 py-0.5 rounded bg-gray-800 bg-opacity-70 text-gray-300 cursor-pointer transition-all duration-300 border-2 border-gray-500 hover:bg-gray-700 hover:text-white;
+    box-shadow: 0 0 8px rgba(150, 150, 150, 0.4);
+  }
+  
+  .interactive-comment::before {
+    content: "#";
+    @apply mr-1 text-gray-400;
+  }
+  
+  .marginalia {
+    @apply fixed z-10 bg-gray-900 text-gray-200 p-3 rounded-lg text-sm italic border-2 border-accent-tertiary my-2 max-w-xs ml-auto mr-0 shadow-xl;
+    animation: pulse-glow 2s infinite;
+  }
+  
+  .notebook-header {
+    @apply text-2xl md:text-3xl font-bold text-notebook-light mb-6 font-mono border-b-2 border-accent-primary pb-2 inline-block;
+  }
+  
+  .notebook-subheader {
+    @apply text-xl md:text-2xl font-semibold text-notebook-light mb-4 font-mono;
+  }
+  
+  .retro-button {
+    @apply bg-gray-800 text-white py-2 px-4 rounded-sm border-2 border-accent-tertiary 
+    hover:bg-gray-700 transition-all duration-300 font-mono text-center
+    active:translate-y-1 active:shadow-inner shadow-lg flex items-center justify-center;
+    text-shadow: 0 0 5px rgba(76, 201, 240, 0.5);
+    box-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
+  }
+  
+  .typing-animation {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 3.5s steps(40, end);
+    border-right: 3px solid rgb(var(--terminal-green));
+  }
+  
+  .code-typing {
+    white-space: pre-wrap;
+    display: inline-block;
+    overflow: hidden;
+    width: 0;
+    animation: typing 2s steps(40, end) forwards;
+  }
+  
+  .typing-cursor {
+    border-right: 3px solid rgb(var(--terminal-green));
+    animation: blink .75s step-end infinite;
+  }
+
+  .terminal-cell {
+    animation: scan-line 2s linear infinite;
+    background-size: 100% 100%;
+    background-image: linear-gradient(
+      0deg,
+      transparent 0%,
+      rgba(32, 32, 64, 0.05) 50%,
+      transparent 100%
+    );
+  }
+
+  /* Menu bar styling */
+  .menu-bar {
+    @apply flex bg-gray-800 text-white border-b border-gray-700 px-2 py-1 font-mono text-sm;
+  }
+  
+  .menu-item {
+    @apply px-3 py-1 hover:bg-gray-700 cursor-pointer relative;
+  }
+  
+  .menu-item:hover .dropdown-menu {
+    @apply block;
+  }
+  
+  .dropdown-menu {
+    @apply absolute hidden left-0 top-full bg-gray-800 border border-gray-700 
+    shadow-lg rounded-sm z-50 w-40;
+  }
+  
+  .dropdown-item {
+    @apply px-4 py-2 hover:bg-gray-700 block w-full text-left;
+  }
+  
+  /* VSCode layout components */
+  .sidebar-container {
+    @apply h-screen bg-gray-900 border-r border-gray-700 flex flex-col transition-all duration-300;
+  }
+  
+  .sidebar-header {
+    @apply h-12 flex items-center justify-between px-3 border-b border-gray-700;
+  }
+  
+  .sidebar-content {
+    @apply flex-1 overflow-y-auto;
+  }
+  
+  .sidebar-category {
+    @apply py-2;
+  }
+  
+  .sidebar-category-header {
+    @apply px-4 py-1 text-xs text-gray-400 uppercase font-bold;
+  }
+  
+  .sidebar-item {
+    @apply flex items-center px-3 py-2 cursor-pointer hover:bg-gray-800 transition-colors;
+  }
+  
+  .sidebar-item.active {
+    @apply bg-gray-800 border-l-2 border-terminal-green;
+  }
+  
+  .tab-header {
+    @apply flex items-center h-10 px-3 border-r border-gray-700 cursor-pointer transition-colors;
+  }
+  
+  .tab-header.active {
+    @apply bg-notebook-dark text-white border-t-2 border-t-terminal-green;
+  }
+  
+  .tab-header:not(.active) {
+    @apply bg-gray-800 text-gray-400 hover:bg-gray-700;
+  }
+  
+  .tab-content {
+    @apply flex-1 overflow-auto;
+  }
+  
+  /* Cell styling */
+  .exploration-notebook {
+    @apply pb-16;
+  }
+  
+  .exploration-cell {
+    @apply mb-12 border-b border-gray-800 pb-8;
+  }
+  
+  .cell-input {
+    @apply relative;
+  }
+  
+  .cell-input-header {
+    @apply flex items-center bg-gray-800 text-gray-400 text-xs px-2 py-1 rounded-t-md;
+  }
+  
+  .cell-input-content {
+    @apply bg-code-bg p-4 rounded-b-md overflow-x-auto text-sm md:text-base leading-relaxed;
+  }
+  
+  .cell-output {
+    @apply relative;
+  }
+  
+  .cell-output-header {
+    @apply flex items-center bg-gray-800 text-gray-400 text-xs px-2 py-1 rounded-t-md;
+  }
+  
+  .cell-output-content {
+    @apply bg-output-bg p-4 rounded-b-md min-h-[100px] transition-opacity duration-500;
+  }
+  
+  .cursor-blink {
+    @apply inline-block h-4 w-2 ml-1 bg-white;
+    animation: blink 1s step-end infinite;
+  }
+  
+  /* Dataset presentation */
+  .dataset-list li {
+    @apply transition-transform duration-300;
+  }
+  
+  .dataset-list li:hover {
+    @apply transform -translate-y-1;
+  }
+  
+  .dataset-preview table {
+    @apply w-full text-sm font-mono border-collapse shadow-md border border-gray-700;
+  }
+  
+  .dataset-preview th {
+    @apply p-2 border border-gray-700 text-left text-terminal-blue bg-gray-800;
+  }
+  
+  .dataset-preview td {
+    @apply p-2 border border-gray-700;
+  }
+  
+  .dataset-preview tr:nth-child(even) {
+    @apply bg-gray-800;
+  }
+  
+  .dataset-preview tr:nth-child(odd) {
+    @apply bg-gray-900;
+  }
+  
+  .detail-view {
+    @apply bg-gray-900 p-4 rounded-md;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(32, 32, 64, 0.6);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(76, 201, 240, 0.7);
+  border-radius: 0;
+  border: 1px solid rgba(76, 201, 240, 0.9);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(76, 201, 240, 0.9);
 }

@@ -1,70 +1,203 @@
-import React from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
+import NotebookLayout from '../components/layout/NotebookLayout';
 
 export default function Home() {
+  // Define notebooks
+  const notebooks = [
+    {
+      id: 'about',
+      title: 'About Me',
+      icon: '👨‍💻',
+      category: 'Personal',
+    },
+    {
+      id: 'projects',
+      title: 'Projects',
+      icon: '📊',
+      category: 'Work',
+    },
+    {
+      id: 'skills',
+      title: 'Skills',
+      icon: '🛠️',
+      category: 'Technical',
+    },
+    {
+      id: 'education',
+      title: 'Education',
+      icon: '🎓',
+      category: 'Personal',
+    },
+    {
+      id: 'interests',
+      title: 'Interests',
+      icon: '🏄‍♂️',
+      category: 'Personal',
+    }
+  ];
+  
+  // Define datasets
+  const datasets = {
+    about_data: {
+      name: 'about_data',
+      description: 'Personal information and background',
+      items: [
+        {
+          id: 'basic_info',
+          name: 'basic_info',
+          title: 'Basic Information',
+          full_name: 'Your Name',
+          role: 'Statistics & Data Science Master\'s Student',
+          location: 'Your Location',
+          email: 'your.email@example.com',
+          related: {
+            'Educational Background': 'education_data',
+            'Technical Skills': 'skills_data'
+          }
+        },
+        {
+          id: 'interests',
+          name: 'interests',
+          title: 'Personal Interests',
+          technical_interests: ['Machine Learning', 'Data Visualization', 'Statistical Modeling'],
+          hobbies: ['Photography', 'Reading', 'Traveling'],
+          related: {
+            'Projects': 'projects_data'
+          }
+        }
+      ]
+    },
+    skills_data: {
+      name: 'skills_data',
+      description: 'Technical skills and proficiency levels',
+      items: [
+        {
+          id: 'programming',
+          name: 'programming',
+          title: 'Programming Languages',
+          skills: [
+            { name: 'Python', proficiency: 90, projects: 15 },
+            { name: 'R', proficiency: 85, projects: 12 },
+            { name: 'JavaScript', proficiency: 75, projects: 8 },
+            { name: 'SQL', proficiency: 80, projects: 10 }
+          ],
+          related: {
+            'Projects': 'projects_data'
+          }
+        },
+        {
+          id: 'data_science',
+          name: 'data_science',
+          title: 'Data Science Skills',
+          skills: [
+            { name: 'Machine Learning', proficiency: 85 },
+            { name: 'Data Visualization', proficiency: 90 },
+            { name: 'Statistical Analysis', proficiency: 88 },
+            { name: 'Big Data Processing', proficiency: 75 }
+          ],
+          tools: ['Scikit-learn', 'TensorFlow', 'Pandas', 'Matplotlib', 'Seaborn', 'D3.js'],
+          related: {
+            'Educational Background': 'education_data'
+          }
+        }
+      ]
+    },
+    education_data: {
+      name: 'education_data',
+      description: 'Educational background and qualifications',
+      items: [
+        {
+          id: 'masters',
+          name: 'masters',
+          title: 'Master\'s Degree',
+          degree: 'MSc in Statistics and Data Science',
+          institution: 'Your University',
+          location: 'City, Country',
+          period: '2022 - 2024',
+          description: 'Specialized in machine learning and statistical modeling with focus on...',
+          key_courses: [
+            'Advanced Machine Learning',
+            'Statistical Learning',
+            'Bayesian Statistics',
+            'Deep Learning'
+          ],
+          related: {
+            'Skills': 'skills_data'
+          }
+        },
+        {
+          id: 'bachelors',
+          name: 'bachelors',
+          title: 'Bachelor\'s Degree',
+          degree: 'BSc in Computer Science',
+          institution: 'Previous University',
+          location: 'City, Country',
+          period: '2018 - 2022',
+          gpa: '3.85/4.0',
+          honors: 'Graduated with honors',
+          related: {
+            'Projects': 'projects_data'
+          }
+        }
+      ]
+    },
+    projects_data: {
+      name: 'projects_data',
+      description: 'Portfolio of data science and statistical projects',
+      items: [
+        {
+          id: 'datathon',
+          name: 'datathon',
+          title: 'Healthcare Datathon Project',
+          description: 'Developed a predictive model for patient readmission rates using healthcare data.',
+          technologies: ['Python', 'Scikit-learn', 'XGBoost', 'Pandas'],
+          role: 'Team Lead',
+          achievements: [
+            'Won 2nd place among 50 participating teams',
+            'Achieved 87% accuracy in predictions',
+            'Implemented novel feature engineering approach'
+          ],
+          challenges: 'Handling missing data and addressing class imbalance',
+          link: 'https://github.com/yourusername/healthcare-datathon',
+          related: {
+            'Skills Used': 'skills_data'
+          }
+        },
+        {
+          id: 'dashboard',
+          name: 'dashboard',
+          title: 'Interactive COVID-19 Dashboard',
+          description: 'Built an interactive web dashboard for COVID-19 data visualization and analysis',
+          technologies: ['JavaScript', 'D3.js', 'React', 'Node.js', 'Express'],
+          features: [
+            'Real-time data integration from multiple sources',
+            'Interactive visualizations with drill-down capability',
+            'Predictive modeling for trend analysis',
+            'Mobile-responsive design'
+          ],
+          github: 'https://github.com/yourusername/covid-dashboard',
+          related: {
+            'Skills Used': 'skills_data'
+          }
+        }
+      ]
+    }
+  };
+
   return (
     <>
       <Head>
-        <title>Data Science Portfolio | Your Name</title>
-        <meta name="description" content="Portfolio site with notebook-style interface" />
+        <title>Data Science Portfolio | Notebook Interface</title>
+        <meta name="description" content="Interactive data science portfolio with notebook interface" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container mx-auto px-4 py-16">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-mono font-bold mb-6">
-            <span className="text-terminal-green">Hello, </span>
-            <span className="text-gray-300">World.</span>
-          </h1>
-          
-          <div className="terminal-window mb-8">
-            <div className="terminal-header">
-              <div className="flex space-x-2">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              </div>
-              <div className="ml-4 text-xs text-gray-400">terminal – portfolio</div>
-            </div>
-            <div className="terminal-body scan-lines">
-              <p className="mb-2"><span className="text-terminal-green">$</span> <span className="text-terminal-blue">whoami</span></p>
-              <div className="pl-4 mb-4">
-                <p>Your Name</p>
-                <p>Statistics & Data Science Master's Student</p>
-              </div>
-              
-              <p className="mb-2"><span className="text-terminal-green">$</span> <span className="text-terminal-blue">cat</span> about.txt</p>
-              <div className="pl-4 mb-4">
-                <p>Welcome to my portfolio site with a unique notebook interface.</p>
-                <p>I'm passionate about data science, statistics, and creating interactive experiences.</p>
-              </div>
-              
-              <p><span className="text-terminal-green">$</span> <span className="text-terminal-blue">ls</span> -la projects/</p>
-              <div className="pl-4 mb-4">
-                <p>-rw-r--r-- data_exploration_interface</p>
-                <p>-rw-r--r-- more_coming_soon</p>
-              </div>
-              
-              <p className="mb-2"><span className="text-terminal-green">$</span> <span className="text-terminal-blue">echo</span> "Check out my interactive data explorer!"</p>
-              <div className="pl-4">
-                <p>Check out my interactive data explorer!</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/exploration" className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-terminal-green border border-terminal-green rounded-md transition-colors shadow-glow-green text-center">
-              <span className="text-terminal-green mr-2">$</span>
-              <span>explore_data()</span>
-            </Link>
-          </div>
-          
-          <div className="mt-16 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} Your Name • Statistics & Data Science</p>
-          </div>
-        </div>
-      </main>
+      <NotebookLayout 
+        notebooks={notebooks}
+        datasets={datasets}
+        defaultActiveNotebook="about"
+      />
     </>
   );
 }
