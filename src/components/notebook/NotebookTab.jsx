@@ -8,12 +8,13 @@ export default function NotebookTab({ notebook, datasets }) {
       return notebook.initialCells;
     }
     
-    // Default welcome cell
+    // Default welcome cell - make sure we use raw strings for code examples
     return [{
       code: `# ${notebook.title || 'Welcome to Data Explorer'}
 # Let's explore the available data
 
-available_data = list_available_data()
+# Get available datasets
+available_data = get_available_datasets()
 print("Available data sources:")
 for source in available_data:
     print(f"  > {source}")
@@ -90,7 +91,7 @@ for source in available_data:
       return;
     }
     
-    // Code for dataset exploration
+    // Code for dataset exploration - use backticks to avoid JS execution
     const cellCode = `# Exploring dataset: ${datasetKey}
 import pandas as pd
 
